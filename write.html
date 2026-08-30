@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>운동 기록하기 | 토마토 운동일지</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Pretendard",
+        "Apple SD Gothic Neo",
+        sans-serif;
+      background: #fff0e8;
+      color: #35251f;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #fffaf5;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      padding: 18px 20px 10px;
+    }
+
+    .back-button {
+      display: flex;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 3px 12px rgba(80, 45, 30, 0.06);
+      font-size: 22px;
+    }
+
+    .tomato {
+      margin-left: auto;
+      font-size: 21px;
+    }
+
+    .content {
+      padding: 14px 20px 40px;
+    }
+
+    .eyebrow {
+      margin-bottom: 6px;
+      color: #2c874f;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.3;
+      letter-spacing: -1px;
+    }
+
+    .description {
+      margin: 8px 0 25px;
+      color: #8b746a;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .form-card {
+      padding: 20px;
+      border: 1px solid #f0dfd6;
+      border-radius: 25px;
+      background: white;
+      box-shadow: 0 6px 18px rgba(90, 55, 40, 0.05);
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 9px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1.5px solid #ebdcd3;
+      border-radius: 15px;
+      outline: none;
+      background: #fffaf7;
+      color: #3d2c25;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    input,
+    select {
+      height: 52px;
+      padding: 0 14px;
+    }
+
+    textarea {
+      min-height: 105px;
+      padding: 14px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #ef493f;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(239, 73, 63, 0.08);
+    }
+
+    .date-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 52px;
+      padding: 0 14px;
+      border: 1.5px solid #ebdcd3;
+      border-radius: 15px;
+      background: #fffaf7;
+    }
+
+    .date-value {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .date-auto {
+      padding: 5px 8px;
+      border-radius: 10px;
+      background: #e9f5e8;
+      color: #39754d;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .time-wrap {
+      position: relative;
+    }
+
+    .time-wrap input {
+      padding-right: 55px;
+    }
+
+    .unit {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      color: #937c71;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .exercise-hint {
+      margin: 8px 2px 0;
+      color: #9b8378;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .save-button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 16px;
+      border: 0;
+      border-radius: 18px;
+      background: #ef493f;
+      box-shadow: 0 8px 20px rgba(239, 73, 63, 0.22);
+      color: white;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .save-button:disabled {
+      background: #d7aaa5;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .error-message {
+      display: none;
+      margin-top: 12px;
+      padding: 13px 15px;
+      border-radius: 15px;
+      background: #fff0ee;
+      color: #b1433b;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .tip {
+      margin-top: 18px;
+      padding: 15px 17px;
+      border-radius: 18px;
+      background: #fff0df;
+      color: #765b4e;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .tip strong {
+      color: #e3483e;
+    }
+
+    .popup-background {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      background: rgba(54, 30, 22, 0.35);
+      backdrop-filter: blur(5px);
+    }
+
+    .popup-background.show {
+      display: flex;
+    }
+
+    .praise-popup {
+      width: 100%;
+      max-width: 380px;
+      padding: 30px 23px 22px;
+      border-radius: 30px;
+      background: #fffaf5;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(86, 42, 30, 0.25);
+      animation: popupAppear 0.3s ease;
+    }
+
+    @keyframes popupAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.86) translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .praise-tomato {
+      margin-bottom: 10px;
+      font-size: 56px;
+      animation: tomatoBounce 0.5s ease;
+    }
+
+    @keyframes tomatoBounce {
+      0% {
+        transform: scale(0.5) rotate(-10deg);
+      }
+
+      60% {
+        transform: scale(1.15) rotate(5deg);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .praise-title {
+      margin-bottom: 12px;
+      color: #ef493f;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .praise-message {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.55;
+      word-break: keep-all;
+    }
+
+    .praise-small {
+      margin: 12px 0 20px;
+      color: #967b70;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .popup-close {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 16px;
+      background: #ef493f;
+      color: white;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <div class="top-bar">
+
+      <a
+        href="index.html"
+        class="back-button"
+      >
+        ‹
+      </a>
+
+      <div class="tomato">
+        🍅
+      </div>
+
+    </div>
+
+
+    <section class="content">
+
+      <div class="eyebrow">
+        TODAY'S MOVEMENT
+      </div>
+
+      <h1>
+        오늘의 운동을<br>
+        기록해볼까요?
+      </h1>
+
+      <p class="description">
+        부담 없이 적고 저장하면 끝이에요.
+      </p>
+
+
+      <div class="form-card">
+
+        <div class="form-group">
+
+          <label>
+            날짜
+          </label>
+
+          <div class="date-box">
+
+            <span
+              class="date-value"
+              id="todayDate"
+            >
+              오늘
+            </span>
+
+            <span class="date-auto">
+              자동 저장
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="exercise">
+            운동 종류
+          </label>
+
+          <select id="exercise">
+
+            <option value="">
+              운동을 골라주세요
+            </option>
+
+            <option value="걷기">
+              🚶 걷기
+            </option>
+
+            <option value="실내 자전거">
+              🚲 실내 자전거
+            </option>
+
+            <option value="근력운동">
+              💪 근력운동
+            </option>
+
+            <option value="스트레칭">
+              🧘 스트레칭
+            </option>
+
+            <option value="달리기">
+              🏃 달리기
+            </option>
+
+            <option value="기타">
+              ⭐ 기타
+            </option>
+
+          </select>
+
+          <p class="exercise-hint">
+            날짜는 서버가 저장하는 순간 오늘 날짜로 자동 입력해요.
+          </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="time">
+            운동 시간
+          </label>
+
+          <div class="time-wrap">
+
+            <input
+              id="time"
+              type="number"
+              inputmode="numeric"
+              min="1"
+              placeholder="예: 30"
+            >
+
+            <span class="unit">
+              분
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="review">
+            한줄후기
+          </label>
+
+          <textarea
+            id="review"
+            placeholder="오늘 운동은 어땠나요?"
+          ></textarea>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="save-button"
+        id="saveButton"
+        type="button"
+      >
+        기록 저장하기
+      </button>
+
+
+      <div
+        class="error-message"
+        id="errorMessage"
+      ></div>
+
+
+      <div class="tip">
+        🍅 <strong>짧게 적어도 충분해요.</strong><br>
+        “귀찮았지만 했다” 같은 한 줄도 좋은 기록이에요.
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <div
+    class="popup-background"
+    id="praisePopup"
+  >
+
+    <div class="praise-popup">
+
+      <div class="praise-tomato">
+        🍅
+      </div>
+
+      <div class="praise-title">
+        기록 저장 완료!
+      </div>
+
+      <p
+        class="praise-message"
+        id="praiseMessage"
+      ></p>
+
+      <p class="praise-small">
+        운동도 했고 기록까지 남겼어요.<br>
+        오늘 할 일은 제대로 했습니다.
+      </p>
+
+      <button
+        class="popup-close"
+        id="popupClose"
+        type="button"
+      >
+        칭찬 받고 기록 보러 가기
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbyG4RzLLzM0a9lIN4Td5jnFpH0l2NYy13LKlxhcSYjHbzVMEVLRkaX-6ZIEhs1hZMKn/exec";
+
+
+    const saveButton =
+      document.getElementById(
+        "saveButton"
+      );
+
+
+    const errorMessage =
+      document.getElementById(
+        "errorMessage"
+      );
+
+
+    /*
+      화면에는 오늘 날짜를 보여주지만
+      이 날짜를 서버로 보내지는 않습니다.
+    */
+    showToday();
+
+
+    saveButton.addEventListener(
+      "click",
+      saveRecord
+    );
+
+
+    document
+      .getElementById("popupClose")
+      .addEventListener(
+        "click",
+        function() {
+
+          location.href =
+            "index.html";
+
+        }
+      );
+
+
+
+    async function saveRecord() {
+
+      const type =
+        document.getElementById(
+          "exercise"
+        ).value;
+
+
+      const time =
+        document.getElementById(
+          "time"
+        ).value.trim();
+
+
+      const review =
+        document.getElementById(
+          "review"
+        ).value.trim();
+
+
+      /*
+        입력 확인
+      */
+      if (!type) {
+
+        showError(
+          "운동 종류를 골라주세요."
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !time ||
+        Number(time) <= 0
+      ) {
+
+        showError(
+          "운동 시간을 입력해주세요."
+        );
+
+        return;
+
+      }
+
+
+      errorMessage.style.display =
+        "none";
+
+
+      saveButton.disabled =
+        true;
+
+
+      saveButton.textContent =
+        "저장하고 있어요…";
+
+
+      /*
+        날짜는 보내지 않습니다.
+
+        Apps Script에는
+        종류 / 시간 / 한줄후기만 보냅니다.
+      */
+      const data = {
+        type: type,
+        time: time,
+        review: review
+      };
+
+
+      try {
+
+        /*
+          Content-Type을 text/plain으로 보내서
+          불필요한 CORS preflight를 피합니다.
+        */
+        const response =
+          await fetch(
+            API_URL,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "text/plain;charset=utf-8"
+              },
+
+              body:
+                JSON.stringify(data)
+            }
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            "서버 응답 오류"
+          );
+
+        }
+
+
+        const text =
+          await response.text();
+
+
+        const result =
+          JSON.parse(text);
+
+
+        if (!result.success) {
+
+          throw new Error(
+            result.message ||
+            "저장에 실패했습니다."
+          );
+
+        }
+
+
+        /*
+          진짜 저장에 성공한 경우에만
+          칭찬 팝업을 띄웁니다.
+        */
+        showPraisePopup();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+
+        showError(
+          "저장하지 못했어요. Apps Script 웹앱의 배포 권한과 인터넷 연결을 확인해주세요."
+        );
+
+
+        saveButton.disabled =
+          false;
+
+
+        saveButton.textContent =
+          "기록 저장하기";
+
+      }
+
+    }
+
+
+
+    function showError(message) {
+
+      errorMessage.textContent =
+        message;
+
+
+      errorMessage.style.display =
+        "block";
+
+    }
+
+
+
+    /*
+      저장할 때마다 칭찬 문장의 앞/중간/끝을
+      각각 무작위로 골라 합칩니다.
+    */
+    function makePraise() {
+
+      const starts = [
+        "오늘도 몸을 움직인 당신,",
+        "귀찮음을 이겨내고 운동한 당신,",
+        "자신을 위해 시간을 낸 당신,",
+        "오늘 운동을 끝까지 해낸 당신,",
+        "운동도 하고 기록까지 남긴 당신,",
+        "오늘의 나를 제대로 챙긴 당신,",
+        "한 번 더 움직이기로 결정한 당신,",
+        "미래의 나를 위해 움직여준 당신,",
+        "조금이라도 몸을 움직인 당신,",
+        "오늘의 운동 기록을 만든 당신,",
+        "해야지에서 진짜 했다로 넘어온 당신,",
+        "오늘도 운동 한 칸을 채운 당신,"
+      ];
+
+
+      const middles = [
+        "진짜 잘했어요.",
+        "아주 제대로 해냈어요.",
+        "이건 분명 칭찬받아야 해요.",
+        "오늘의 MVP입니다.",
+        "스스로 박수 쳐도 됩니다.",
+        "꾸준함을 하나 더 적립했어요.",
+        "생각보다 훨씬 멋진 일을 했어요.",
+        "자신과의 약속을 또 지켰네요.",
+        "토마토가 공식 인정합니다. 🍅",
+        "오늘 할 일을 멋지게 완료했어요.",
+        "이미 충분히 잘했습니다.",
+        "이런 게 진짜 꾸준함이에요.",
+        "오늘도 성공 하나 추가했어요.",
+        "진짜 기특하고 대단합니다.",
+        "오늘의 나에게 만점을 줘도 돼요."
+      ];
+
+
+      const ends = [
+        "오늘 운동은 대성공! 👏",
+        "마음껏 뿌듯해하세요.",
+        "오늘의 토마토 도장 쾅! 🍅✅",
+        "이 기록은 멋진 한 걸음이에요.",
+        "오늘은 잘했다는 말 백 번 들어도 돼요.",
+        "내일의 나는 오늘의 나에게 고마워할 거예요.",
+        "완벽하지 않아도 해냈다는 게 제일 중요해요.",
+        "다음 운동은 나중에 생각하고 지금은 칭찬받으세요.",
+        "오늘의 움직임 적립 완료!",
+        "당당하게 '나 오늘 운동했다' 해도 됩니다.",
+        "오늘 하나를 또 쌓았습니다. 🌱",
+        "이런 하루가 모이면 정말 달라져요.",
+        "오늘의 당신, 꽤 멋집니다.",
+        "운동 완료. 기록 완료. 칭찬 받을 차례!"
+      ];
+
+
+      return (
+        randomItem(starts) +
+        "<br>" +
+        randomItem(middles) +
+        "<br>" +
+        randomItem(ends)
+      );
+
+    }
+
+
+
+    function randomItem(array) {
+
+      return array[
+        Math.floor(
+          Math.random() *
+          array.length
+        )
+      ];
+
+    }
+
+
+
+    function showPraisePopup() {
+
+      document.getElementById(
+        "praiseMessage"
+      ).innerHTML =
+        makePraise();
+
+
+      document.getElementById(
+        "praisePopup"
+      ).classList.add(
+        "show"
+      );
+
+    }
+
+
+
+    function showToday() {
+
+      const today =
+        new Date();
+
+
+      const weekdays = [
+        "일",
+        "월",
+        "화",
+        "수",
+        "목",
+        "금",
+        "토"
+      ];
+
+
+      const text =
+        today.getFullYear() +
+        "년 " +
+        (today.getMonth() + 1) +
+        "월 " +
+        today.getDate() +
+        "일 " +
+        weekdays[today.getDay()] +
+        "요일";
+
+
+      document.getElementById(
+        "todayDate"
+      ).textContent =
+        text;
+
+    }
+
+  </script>
+
+</body>
+</html>

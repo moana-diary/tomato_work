@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>운동 달력 | 토마토 운동일지</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Pretendard",
+        "Apple SD Gothic Neo",
+        sans-serif;
+      background: #fff0e8;
+      color: #35251f;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding-bottom: 110px;
+      background: #fffaf5;
+    }
+
+    .header {
+      padding: 25px 20px 16px;
+    }
+
+    .logo {
+      margin-bottom: 7px;
+      color: #26844b;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 27px;
+      letter-spacing: -1px;
+    }
+
+    .header p {
+      margin: 7px 0 0;
+      color: #887269;
+      font-size: 14px;
+    }
+
+    .view-tabs {
+      display: flex;
+      gap: 8px;
+      margin: 5px 20px 22px;
+      padding: 5px;
+      border-radius: 17px;
+      background: #f6e7de;
+    }
+
+    .view-tab {
+      flex: 1;
+      padding: 11px 10px;
+      border-radius: 13px;
+      color: #927b70;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .view-tab.active {
+      background: white;
+      color: #df3e35;
+      box-shadow: 0 3px 10px rgba(92, 51, 36, 0.08);
+    }
+
+    .calendar-card {
+      margin: 0 20px;
+      padding: 18px 15px 20px;
+      border: 1px solid #f0dfd6;
+      border-radius: 25px;
+      background: white;
+      box-shadow: 0 6px 18px rgba(90, 55, 40, 0.05);
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 3px 5px 20px;
+    }
+
+    .month-button {
+      display: flex;
+      width: 37px;
+      height: 37px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 12px;
+      background: #fff0e8;
+      color: #dc453b;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .month-title {
+      text-align: center;
+    }
+
+    .month-title strong {
+      display: block;
+      font-size: 19px;
+    }
+
+    .month-title span {
+      display: block;
+      margin-top: 3px;
+      color: #9d8378;
+      font-size: 11px;
+    }
+
+    .weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    .weekday {
+      padding: 6px 0 10px;
+      color: #a0867a;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .weekday:first-child {
+      color: #e95b52;
+    }
+
+    .day {
+      position: relative;
+      display: flex;
+      min-height: 53px;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 8px;
+      border: 0;
+      border-radius: 14px;
+      background: transparent;
+      color: #644f47;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .day.empty {
+      cursor: default;
+    }
+
+    .day.exercise-day {
+      background: #fff2e8;
+      color: #d63d34;
+      font-weight: 900;
+    }
+
+    .day.exercise-day::after {
+      position: absolute;
+      bottom: 7px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ef493f;
+      content: "";
+    }
+
+    .day.today {
+      box-shadow: inset 0 0 0 2px #ef493f;
+    }
+
+    .day.selected {
+      background: #ef493f;
+      color: white;
+      font-weight: 900;
+    }
+
+    .day.selected::after {
+      background: white;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 14px;
+      color: #91776d;
+      font-size: 11px;
+    }
+
+    .legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ef493f;
+    }
+
+    .records-section {
+      margin: 24px 20px 0;
+    }
+
+    .section-heading {
+      margin: 0 0 12px;
+      font-size: 17px;
+    }
+
+    .day-record-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mini-card {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 16px;
+      border: 1px solid #f0dfd6;
+      border-radius: 20px;
+      background: white;
+    }
+
+    .mini-icon {
+      display: flex;
+      width: 43px;
+      height: 43px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      background: #fff0e4;
+      font-size: 21px;
+    }
+
+    .mini-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .mini-name {
+      margin-bottom: 4px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .mini-detail {
+      color: #8b756b;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .empty-record {
+      padding: 22px;
+      border-radius: 20px;
+      background: #fff3eb;
+      color: #8a7167;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .error {
+      margin: 0 20px 20px;
+      padding: 18px;
+      border-radius: 20px;
+      background: #fff1ef;
+      color: #ad4941;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .write-button {
+      position: fixed;
+      left: 50%;
+      bottom: 77px;
+      z-index: 10;
+      width: calc(100% - 40px);
+      max-width: 440px;
+      padding: 16px;
+      transform: translateX(-50%);
+      border-radius: 18px;
+      background: #ef493f;
+      box-shadow: 0 8px 22px rgba(239, 73, 63, 0.28);
+      color: white;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 9;
+      display: flex;
+      width: 100%;
+      max-width: 480px;
+      height: 65px;
+      transform: translateX(-50%);
+      border-top: 1px solid #f0ded4;
+      background: rgba(255, 250, 245, 0.96);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-item {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: #998078;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .nav-item .icon {
+      font-size: 19px;
+    }
+
+    .nav-item.active {
+      color: #e84137;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <header class="header">
+
+      <div class="logo">
+        🍅 TOMATO LOG
+      </div>
+
+      <h1>운동 달력</h1>
+
+      <p>
+        움직인 날을 한눈에 볼 수 있어요.
+      </p>
+
+    </header>
+
+
+    <nav class="view-tabs">
+
+      <a
+        href="index.html"
+        class="view-tab"
+      >
+        목록
+      </a>
+
+      <a
+        href="calendar.html"
+        class="view-tab active"
+      >
+        달력
+      </a>
+
+    </nav>
+
+
+    <div
+      id="errorBox"
+      class="error"
+      style="display:none;"
+    ></div>
+
+
+    <section class="calendar-card">
+
+      <div class="calendar-header">
+
+        <button
+          class="month-button"
+          id="prevMonth"
+          type="button"
+        >
+          ‹
+        </button>
+
+        <div class="month-title">
+
+          <strong id="monthTitle">
+            -
+          </strong>
+
+          <span id="monthCount">
+            기록을 불러오는 중
+          </span>
+
+        </div>
+
+        <button
+          class="month-button"
+          id="nextMonth"
+          type="button"
+        >
+          ›
+        </button>
+
+      </div>
+
+
+      <div class="weekdays">
+        <div class="weekday">일</div>
+        <div class="weekday">월</div>
+        <div class="weekday">화</div>
+        <div class="weekday">수</div>
+        <div class="weekday">목</div>
+        <div class="weekday">금</div>
+        <div class="weekday">토</div>
+      </div>
+
+
+      <div
+        class="calendar-grid"
+        id="calendarGrid"
+      ></div>
+
+
+      <div class="legend">
+
+        <span class="legend-dot"></span>
+
+        운동 기록이 있는 날
+
+      </div>
+
+    </section>
+
+
+    <section class="records-section">
+
+      <h2
+        class="section-heading"
+        id="selectedDateTitle"
+      >
+        오늘의 기록
+      </h2>
+
+      <div
+        class="day-record-list"
+        id="dayRecordList"
+      >
+
+        <div class="empty-record">
+          기록을 불러오는 중이에요 🍅
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <a
+    href="write.html"
+    class="write-button"
+  >
+    ＋ 운동 기록하기
+  </a>
+
+
+  <nav class="bottom-nav">
+
+    <a
+      href="index.html"
+      class="nav-item"
+    >
+      <span class="icon">🍅</span>
+      기록
+    </a>
+
+    <a
+      href="calendar.html"
+      class="nav-item active"
+    >
+      <span class="icon">📅</span>
+      달력
+    </a>
+
+  </nav>
+
+
+  <script>
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbyG4RzLLzM0a9lIN4Td5jnFpH0l2NYy13LKlxhcSYjHbzVMEVLRkaX-6ZIEhs1hZMKn/exec";
+
+
+    let allRecords = [];
+
+
+    const today =
+      new Date();
+
+
+    let currentYear =
+      today.getFullYear();
+
+
+    let currentMonth =
+      today.getMonth();
+
+
+    let selectedDateKey =
+      makeDateKey(today);
+
+
+    document
+      .getElementById("prevMonth")
+      .addEventListener(
+        "click",
+        function() {
+
+          currentMonth--;
+
+          if (currentMonth < 0) {
+
+            currentMonth = 11;
+            currentYear--;
+
+          }
+
+          selectDefaultDate();
+
+          renderCalendar();
+
+        }
+      );
+
+
+    document
+      .getElementById("nextMonth")
+      .addEventListener(
+        "click",
+        function() {
+
+          currentMonth++;
+
+          if (currentMonth > 11) {
+
+            currentMonth = 0;
+            currentYear++;
+
+          }
+
+          selectDefaultDate();
+
+          renderCalendar();
+
+        }
+      );
+
+
+    loadRecords();
+
+
+
+    async function loadRecords() {
+
+      try {
+
+        const response =
+          await fetch(
+            API_URL +
+            "?t=" +
+            Date.now()
+          );
+
+
+        if (!response.ok) {
+          throw new Error(
+            "서버 응답 오류"
+          );
+        }
+
+
+        const text =
+          await response.text();
+
+
+        const data =
+          JSON.parse(text);
+
+
+        if (!data.success) {
+
+          throw new Error(
+            data.message ||
+            "기록을 불러오지 못했습니다."
+          );
+
+        }
+
+
+        allRecords =
+          data.records || [];
+
+
+        renderCalendar();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        const errorBox =
+          document.getElementById(
+            "errorBox"
+          );
+
+
+        errorBox.style.display =
+          "block";
+
+
+        errorBox.textContent =
+          "운동 기록을 불러오지 못했어요. Apps Script 웹앱의 배포 권한을 확인해주세요.";
+
+
+        renderCalendar();
+
+      }
+
+    }
+
+
+
+    function selectDefaultDate() {
+
+      const isCurrentMonth =
+        currentYear ===
+          today.getFullYear() &&
+        currentMonth ===
+          today.getMonth();
+
+
+      if (isCurrentMonth) {
+
+        selectedDateKey =
+          makeDateKey(today);
+
+      } else {
+
+        selectedDateKey =
+          makeDateKey(
+            new Date(
+              currentYear,
+              currentMonth,
+              1
+            )
+          );
+
+      }
+
+    }
+
+
+
+    function renderCalendar() {
+
+      const grid =
+        document.getElementById(
+          "calendarGrid"
+        );
+
+
+      grid.innerHTML = "";
+
+
+      document.getElementById(
+        "monthTitle"
+      ).textContent =
+        currentYear +
+        "년 " +
+        (currentMonth + 1) +
+        "월";
+
+
+      const firstDay =
+        new Date(
+          currentYear,
+          currentMonth,
+          1
+        ).getDay();
+
+
+      const lastDate =
+        new Date(
+          currentYear,
+          currentMonth + 1,
+          0
+        ).getDate();
+
+
+      const monthRecords =
+        allRecords.filter(
+          function(record) {
+
+            const date =
+              parseRecordDate(
+                record.date
+              );
+
+
+            return (
+              date &&
+              date.getFullYear() ===
+                currentYear &&
+              date.getMonth() ===
+                currentMonth
+            );
+
+          }
+        );
+
+
+      document.getElementById(
+        "monthCount"
+      ).textContent =
+        monthRecords.length +
+        "번 운동했어요";
+
+
+      for (
+        let i = 0;
+        i < firstDay;
+        i++
+      ) {
+
+        const empty =
+          document.createElement(
+            "div"
+          );
+
+        empty.className =
+          "day empty";
+
+        grid.appendChild(
+          empty
+        );
+
+      }
+
+
+      for (
+        let day = 1;
+        day <= lastDate;
+        day++
+      ) {
+
+        const date =
+          new Date(
+            currentYear,
+            currentMonth,
+            day
+          );
+
+
+        const key =
+          makeDateKey(date);
+
+
+        const button =
+          document.createElement(
+            "button"
+          );
+
+
+        button.type =
+          "button";
+
+        button.className =
+          "day";
+
+        button.textContent =
+          day;
+
+
+        const hasExercise =
+          allRecords.some(
+            function(record) {
+
+              const recordDate =
+                parseRecordDate(
+                  record.date
+                );
+
+
+              return (
+                recordDate &&
+                makeDateKey(
+                  recordDate
+                ) === key
+              );
+
+            }
+          );
+
+
+        if (hasExercise) {
+
+          button.classList.add(
+            "exercise-day"
+          );
+
+        }
+
+
+        if (
+          key ===
+          makeDateKey(today)
+        ) {
+
+          button.classList.add(
+            "today"
+          );
+
+        }
+
+
+        if (
+          key ===
+          selectedDateKey
+        ) {
+
+          button.classList.add(
+            "selected"
+          );
+
+        }
+
+
+        button.addEventListener(
+          "click",
+          function() {
+
+            selectedDateKey =
+              key;
+
+            renderCalendar();
+
+          }
+        );
+
+
+        grid.appendChild(
+          button
+        );
+
+      }
+
+
+      renderSelectedDay();
+
+    }
+
+
+
+    function renderSelectedDay() {
+
+      const list =
+        document.getElementById(
+          "dayRecordList"
+        );
+
+
+      const date =
+        dateFromKey(
+          selectedDateKey
+        );
+
+
+      document.getElementById(
+        "selectedDateTitle"
+      ).textContent =
+        (date.getMonth() + 1) +
+        "월 " +
+        date.getDate() +
+        "일 기록";
+
+
+      const records =
+        allRecords.filter(
+          function(record) {
+
+            const recordDate =
+              parseRecordDate(
+                record.date
+              );
+
+
+            return (
+              recordDate &&
+              makeDateKey(
+                recordDate
+              ) ===
+                selectedDateKey
+            );
+
+          }
+        );
+
+
+      list.innerHTML = "";
+
+
+      if (records.length === 0) {
+
+        list.innerHTML = `
+          <div class="empty-record">
+            이날은 아직 운동 기록이 없어요.
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      records.forEach(
+        function(record) {
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "mini-card";
+
+
+          card.innerHTML = `
+            <div class="mini-icon">
+              ${getExerciseIcon(record.type)}
+            </div>
+
+            <div class="mini-info">
+
+              <div class="mini-name"></div>
+
+              <div class="mini-detail"></div>
+
+            </div>
+          `;
+
+
+          card.querySelector(
+            ".mini-name"
+          ).textContent =
+            record.type ||
+            "운동";
+
+
+          const review =
+            record.review
+              ? " · " +
+                record.review
+              : "";
+
+
+          card.querySelector(
+            ".mini-detail"
+          ).textContent =
+            (record.time || "0") +
+            "분" +
+            review;
+
+
+          list.appendChild(
+            card
+          );
+
+        }
+      );
+
+    }
+
+
+
+    function parseRecordDate(value) {
+
+      if (!value) {
+        return null;
+      }
+
+
+      const numbers =
+        String(value).match(/\d+/g);
+
+
+      if (
+        !numbers ||
+        numbers.length < 3
+      ) {
+        return null;
+      }
+
+
+      const date =
+        new Date(
+          Number(numbers[0]),
+          Number(numbers[1]) - 1,
+          Number(numbers[2])
+        );
+
+
+      if (
+        isNaN(
+          date.getTime()
+        )
+      ) {
+        return null;
+      }
+
+
+      return date;
+
+    }
+
+
+
+    function makeDateKey(date) {
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(2, "0");
+
+
+      const day =
+        String(
+          date.getDate()
+        ).padStart(2, "0");
+
+
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+      );
+
+    }
+
+
+
+    function dateFromKey(key) {
+
+      const parts =
+        key.split("-");
+
+
+      return new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+      );
+
+    }
+
+
+
+    function getExerciseIcon(type) {
+
+      const name =
+        String(type || "");
+
+
+      if (name.includes("걷")) {
+        return "🚶";
+      }
+
+
+      if (name.includes("자전거")) {
+        return "🚲";
+      }
+
+
+      if (name.includes("근력")) {
+        return "💪";
+      }
+
+
+      if (
+        name.includes("스트레칭") ||
+        name.includes("요가")
+      ) {
+        return "🧘";
+      }
+
+
+      if (
+        name.includes("달리기") ||
+        name.includes("러닝")
+      ) {
+        return "🏃";
+      }
+
+
+      return "⭐";
+
+    }
+
+  </script>
+
+</body>
+</html>

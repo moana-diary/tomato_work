@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>토마토 운동일지</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Pretendard",
+        "Apple SD Gothic Neo",
+        sans-serif;
+      background: #fff0e8;
+      color: #35251f;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding-bottom: 110px;
+      background: #fffaf5;
+    }
+
+    .header {
+      padding: 26px 20px 16px;
+    }
+
+    .logo {
+      margin-bottom: 8px;
+      color: #26844b;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .title {
+      margin: 0;
+      min-height: 76px;
+      font-size: 29px;
+      line-height: 1.35;
+      letter-spacing: -1px;
+    }
+
+    .title strong {
+      color: #ef493f;
+    }
+
+    .subtitle {
+      margin: 9px 0 0;
+      color: #89736a;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .summary {
+      margin: 10px 20px 22px;
+      padding: 20px;
+      border-radius: 24px;
+      background: #ef493f;
+      color: white;
+      box-shadow: 0 8px 20px rgba(239, 73, 63, 0.16);
+    }
+
+    .summary-label {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .summary-number {
+      margin-top: 5px;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .summary-message {
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.55;
+      opacity: 0.95;
+    }
+
+    .view-tabs {
+      display: flex;
+      gap: 8px;
+      margin: 0 20px 24px;
+      padding: 5px;
+      border-radius: 17px;
+      background: #f6e7de;
+    }
+
+    .view-tab {
+      flex: 1;
+      padding: 11px 10px;
+      border-radius: 13px;
+      color: #927b70;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .view-tab.active {
+      background: white;
+      color: #df3e35;
+      box-shadow: 0 3px 10px rgba(92, 51, 36, 0.08);
+    }
+
+    .section {
+      padding: 0 20px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 13px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .section-title span {
+      color: #9b8277;
+      font-size: 12px;
+    }
+
+    .record-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .record-card {
+      padding: 17px;
+      border: 1px solid #f0dfd6;
+      border-radius: 21px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(90, 55, 40, 0.04);
+    }
+
+    .record-date {
+      margin-bottom: 8px;
+      color: #a08275;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .exercise {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .exercise-icon {
+      display: flex;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      background: #fff0e4;
+      font-size: 21px;
+    }
+
+    .exercise-name {
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .exercise-time {
+      margin-top: 3px;
+      color: #836f66;
+      font-size: 13px;
+    }
+
+    .review {
+      margin: 15px 0 0;
+      padding: 12px 14px;
+      border-radius: 15px;
+      background: #fff8f3;
+      color: #66534b;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .review-label {
+      margin-right: 5px;
+      color: #e34a3f;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .loading,
+    .empty,
+    .error {
+      padding: 30px 20px;
+      border: 1px solid #f0dfd6;
+      border-radius: 21px;
+      background: white;
+      color: #8b746a;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .error {
+      background: #fff3f1;
+      color: #b1453d;
+    }
+
+    .write-button {
+      position: fixed;
+      left: 50%;
+      bottom: 77px;
+      z-index: 10;
+      width: calc(100% - 40px);
+      max-width: 440px;
+      padding: 16px;
+      transform: translateX(-50%);
+      border-radius: 18px;
+      background: #ef493f;
+      box-shadow: 0 8px 22px rgba(239, 73, 63, 0.28);
+      color: white;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 9;
+      display: flex;
+      width: 100%;
+      max-width: 480px;
+      height: 65px;
+      transform: translateX(-50%);
+      border-top: 1px solid #f0ded4;
+      background: rgba(255, 250, 245, 0.96);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-item {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: #998078;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .nav-item .icon {
+      font-size: 19px;
+    }
+
+    .nav-item.active {
+      color: #e84137;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <header class="header">
+
+      <div class="logo">
+        🍅 TOMATO LOG
+      </div>
+
+      <h1 class="title" id="randomTitle">
+        기록을 불러오는 중이에요.
+      </h1>
+
+      <p class="subtitle">
+        운동한 날과 기분을 가볍게 기록해보세요.
+      </p>
+
+    </header>
+
+
+    <section class="summary">
+
+      <div class="summary-label">
+        이번 주 운동 기록
+      </div>
+
+      <div class="summary-number">
+        <span id="exerciseCount">-</span>회
+      </div>
+
+      <div
+        class="summary-message"
+        id="summaryMessage"
+      >
+        운동 기록을 확인하고 있어요 🍅
+      </div>
+
+    </section>
+
+
+    <nav class="view-tabs">
+
+      <a
+        href="index.html"
+        class="view-tab active"
+      >
+        목록
+      </a>
+
+      <a
+        href="calendar.html"
+        class="view-tab"
+      >
+        달력
+      </a>
+
+    </nav>
+
+
+    <section class="section">
+
+      <div class="section-title">
+
+        <h2>최근 기록</h2>
+
+        <span id="recordCount">
+          불러오는 중
+        </span>
+
+      </div>
+
+
+      <div
+        class="record-list"
+        id="recordList"
+      >
+
+        <div class="loading">
+          🍅 운동 기록을 가져오고 있어요.
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <a
+    href="write.html"
+    class="write-button"
+  >
+    ＋ 운동 기록하기
+  </a>
+
+
+  <nav class="bottom-nav">
+
+    <a
+      href="index.html"
+      class="nav-item active"
+    >
+      <span class="icon">🍅</span>
+      기록
+    </a>
+
+    <a
+      href="calendar.html"
+      class="nav-item"
+    >
+      <span class="icon">📅</span>
+      달력
+    </a>
+
+  </nav>
+
+
+  <script>
+
+    /*
+      내가 배포한 Google Apps Script 웹앱 주소
+    */
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbyG4RzLLzM0a9lIN4Td5jnFpH0l2NYy13LKlxhcSYjHbzVMEVLRkaX-6ZIEhs1hZMKn/exec";
+
+
+    /*
+      페이지를 열자마자 스프레드시트 기록을 불러옵니다.
+    */
+    loadRecords();
+
+
+    async function loadRecords() {
+
+      const recordList =
+        document.getElementById("recordList");
+
+      try {
+
+        /*
+          뒤에 현재 시간을 붙여서
+          이전 결과가 캐시되는 것을 줄입니다.
+        */
+        const response = await fetch(
+          API_URL + "?t=" + Date.now()
+        );
+
+
+        if (!response.ok) {
+          throw new Error(
+            "서버 응답 오류"
+          );
+        }
+
+
+        const text =
+          await response.text();
+
+
+        const data =
+          JSON.parse(text);
+
+
+        if (!data.success) {
+          throw new Error(
+            data.message ||
+            "기록을 불러오지 못했습니다."
+          );
+        }
+
+
+        const records =
+          data.records || [];
+
+
+        /*
+          실제 시트 내용을 화면에 표시합니다.
+        */
+        renderRecords(records);
+
+
+        /*
+          실제 이번 주 운동 횟수를 계산합니다.
+        */
+        updateWeeklyPraise(records);
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+          "randomTitle"
+        ).innerHTML =
+          "기록을 불러오지 못했어요.<br><strong>연결을 확인해주세요.</strong>";
+
+
+        document.getElementById(
+          "exerciseCount"
+        ).textContent = "-";
+
+
+        document.getElementById(
+          "summaryMessage"
+        ).textContent =
+          "웹앱 배포 권한과 주소를 확인해주세요.";
+
+
+        document.getElementById(
+          "recordCount"
+        ).textContent = "";
+
+
+        recordList.innerHTML = `
+          <div class="error">
+            기록을 불러오지 못했어요.<br>
+            Apps Script 웹앱이
+            '모든 사용자'에게 공개되어 있는지 확인해주세요.
+          </div>
+        `;
+
+      }
+
+    }
+
+
+
+    /*
+      받아온 기록을 최신 날짜순으로 보여줍니다.
+    */
+    function renderRecords(records) {
+
+      const recordList =
+        document.getElementById(
+          "recordList"
+        );
+
+
+      document.getElementById(
+        "recordCount"
+      ).textContent =
+        "전체 " + records.length + "개";
+
+
+      if (records.length === 0) {
+
+        recordList.innerHTML = `
+          <div class="empty">
+            아직 운동 기록이 없어요.<br>
+            첫 운동을 기록해볼까요? 🌱
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      /*
+        날짜가 최신인 기록부터 정렬합니다.
+        날짜가 같으면 시트에서 더 아래에 있는 기록이 먼저 나옵니다.
+      */
+      const sortedRecords =
+        [...records].sort(function(a, b) {
+
+          const dateA =
+            parseRecordDate(a.date);
+
+          const dateB =
+            parseRecordDate(b.date);
+
+
+          if (
+            dateA &&
+            dateB &&
+            dateA.getTime() !==
+              dateB.getTime()
+          ) {
+
+            return (
+              dateB.getTime() -
+              dateA.getTime()
+            );
+
+          }
+
+
+          return (
+            Number(b.row || 0) -
+            Number(a.row || 0)
+          );
+
+        });
+
+
+      recordList.innerHTML = "";
+
+
+      sortedRecords.forEach(
+        function(record) {
+
+          const card =
+            document.createElement("article");
+
+          card.className =
+            "record-card";
+
+
+          const date =
+            parseRecordDate(record.date);
+
+
+          const dateText =
+            date
+              ? formatKoreanDate(date)
+              : record.date;
+
+
+          const icon =
+            getExerciseIcon(record.type);
+
+
+          card.innerHTML = `
+            <div class="record-date"></div>
+
+            <div class="exercise">
+
+              <div class="exercise-icon">
+                ${icon}
+              </div>
+
+              <div>
+
+                <div class="exercise-name"></div>
+
+                <div class="exercise-time"></div>
+
+              </div>
+
+            </div>
+
+            <p class="review">
+              <span class="review-label">
+                한줄후기
+              </span>
+              <span class="review-text"></span>
+            </p>
+          `;
+
+
+          card.querySelector(
+            ".record-date"
+          ).textContent =
+            dateText;
+
+
+          card.querySelector(
+            ".exercise-name"
+          ).textContent =
+            record.type ||
+            "운동";
+
+
+          card.querySelector(
+            ".exercise-time"
+          ).textContent =
+            (record.time || "0") +
+            "분";
+
+
+          card.querySelector(
+            ".review-text"
+          ).textContent =
+            record.review ||
+            "후기를 남기지 않았어요.";
+
+
+          recordList.appendChild(
+            card
+          );
+
+        }
+      );
+
+    }
+
+
+
+    /*
+      이번 주 월요일 00:00을 구합니다.
+    */
+    function getWeekStart(date) {
+
+      const result =
+        new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate()
+        );
+
+
+      const day =
+        result.getDay();
+
+
+      const difference =
+        day === 0
+          ? -6
+          : 1 - day;
+
+
+      result.setDate(
+        result.getDate() +
+        difference
+      );
+
+
+      return result;
+
+    }
+
+
+
+    /*
+      이번 주 운동 기록 수를 계산하고
+      횟수에 맞는 칭찬을 보여줍니다.
+    */
+    function updateWeeklyPraise(
+      records
+    ) {
+
+      const today =
+        new Date();
+
+
+      const start =
+        getWeekStart(today);
+
+
+      const end =
+        new Date(start);
+
+
+      end.setDate(
+        end.getDate() + 7
+      );
+
+
+      const thisWeekRecords =
+        records.filter(
+          function(record) {
+
+            const date =
+              parseRecordDate(
+                record.date
+              );
+
+
+            if (!date) {
+              return false;
+            }
+
+
+            return (
+              date >= start &&
+              date < end
+            );
+
+          }
+        );
+
+
+      const count =
+        thisWeekRecords.length;
+
+
+      document.getElementById(
+        "exerciseCount"
+      ).textContent =
+        count;
+
+
+      showPraise(count);
+
+    }
+
+
+
+    /*
+      주간 횟수별 랜덤 칭찬
+    */
+    function showPraise(count) {
+
+      const zeroMessages = [
+        "이번 주는 아직 시작 전이에요.<br><strong>오늘 한 번이면 충분해요 🌱</strong>",
+        "빈칸이어도 괜찮아요.<br><strong>이번 주 첫 움직임을 가볍게 시작해봐요.</strong>",
+        "쉬었다면 다시 시작하면 돼요.<br><strong>조금 움직이는 것도 운동이에요.</strong>",
+        "아직 늦지 않았어요.<br><strong>오늘이 이번 주 첫 기록이 될 수 있어요.</strong>"
+      ];
+
+
+      const oneMessages = [
+        "이번 주 첫 운동 완료!<br><strong>시작한 사람이 제일 멋져요 🍅</strong>",
+        "한 번 움직였어요.<br><strong>이번 주의 좋은 시작이에요.</strong>",
+        "0에서 1이 됐어요.<br><strong>그 한 번이 정말 중요해요!</strong>",
+        "이번 주 첫 기록 성공.<br><strong>아주 잘 시작했어요 👏</strong>"
+      ];
+
+
+      const twoMessages = [
+        "이번 주 벌써 두 번 움직였어요.<br><strong>좋은 흐름이에요!</strong>",
+        "두 번째 운동까지 완료.<br><strong>꾸준함이 슬슬 생기고 있어요 🌿</strong>",
+        "한 번 하고 끝나지 않았네요.<br><strong>이게 꾸준함의 시작!</strong>",
+        "이번 주 두 번이나 나를 챙겼어요.<br><strong>아주 잘하고 있어요.</strong>"
+      ];
+
+
+      const threeMessages = [
+        "이번 주 벌써 세 번 운동했어요.<br><strong>진짜 잘하고 있어요!</strong>",
+        "일주일에 세 번이나 움직였어요.<br><strong>충분히 칭찬받을 만해요 🍅</strong>",
+        "세 번째 운동까지 완료!<br><strong>운동이 일상에 들어오고 있어요.</strong>",
+        "이번 주 운동 3회 달성.<br><strong>아주 멋진 한 주예요 👏</strong>"
+      ];
+
+
+      const greatMessages = [
+        "이번 주 정말 많이 움직였어요.<br><strong>이 정도면 완전 대단해요!</strong>",
+        "운동 기록이 한 주를 꽉 채우고 있어요.<br><strong>엄청 잘하고 있어요 🍅✨</strong>",
+        "이번 주 나를 정말 잘 챙겼네요.<br><strong>꾸준함이 제대로 쌓이고 있어요.</strong>",
+        "이 정도면 마음껏 자랑해도 돼요.<br><strong>진짜 멋진 한 주예요!</strong>"
+      ];
+
+
+      const amazingMessages = [
+        "잠깐, 이번 주 거의 매일 운동했잖아요?!<br><strong>진짜 엄청납니다 🍅🏆</strong>",
+        "이번 주 운동 기록이 거의 꽉 찼어요.<br><strong>박수 백 번 받아도 됩니다 👏👏👏</strong>",
+        "토마토도 감동했어요.<br><strong>이번 주 정말 최고였어요 🍅✨</strong>",
+        "거의 매일 몸을 움직였네요.<br><strong>정말 대단한 꾸준함이에요!</strong>"
+      ];
+
+
+      let messages;
+
+
+      if (count === 0) {
+
+        messages =
+          zeroMessages;
+
+      } else if (count === 1) {
+
+        messages =
+          oneMessages;
+
+      } else if (count === 2) {
+
+        messages =
+          twoMessages;
+
+      } else if (count === 3) {
+
+        messages =
+          threeMessages;
+
+      } else if (count <= 5) {
+
+        messages =
+          greatMessages;
+
+      } else {
+
+        messages =
+          amazingMessages;
+
+      }
+
+
+      document.getElementById(
+        "randomTitle"
+      ).innerHTML =
+        pickRandom(messages);
+
+
+      const summaryMessage =
+        document.getElementById(
+          "summaryMessage"
+        );
+
+
+      if (count === 0) {
+
+        summaryMessage.textContent =
+          "이번 주 첫 운동부터 천천히 시작해봐요 🌱";
+
+      } else if (count === 1) {
+
+        summaryMessage.textContent =
+          "첫 운동 완료! 이미 한 걸음 움직였어요 🍅";
+
+      } else if (count === 2) {
+
+        summaryMessage.textContent =
+          "두 번이나 움직였어요. 좋은 리듬이에요 🌿";
+
+      } else if (count === 3) {
+
+        summaryMessage.textContent =
+          "이번 주 3회 완료. 아주 훌륭한 페이스예요 👏";
+
+      } else if (count <= 5) {
+
+        summaryMessage.textContent =
+          "이번 주 정말 꾸준했어요. 충분히 뿌듯해해도 돼요 🍅✨";
+
+      } else {
+
+        summaryMessage.textContent =
+          "거의 매일 운동했어요! 정말 대단한 한 주예요 🏆";
+
+      }
+
+    }
+
+
+
+    function pickRandom(array) {
+
+      return array[
+        Math.floor(
+          Math.random() *
+          array.length
+        )
+      ];
+
+    }
+
+
+
+    /*
+      시트의 날짜가
+      2026-08-30
+      2026. 8. 30.
+      2026/08/30
+      같은 형태여도 읽을 수 있게 합니다.
+    */
+    function parseRecordDate(value) {
+
+      if (!value) {
+        return null;
+      }
+
+
+      const numbers =
+        String(value).match(/\d+/g);
+
+
+      if (
+        numbers &&
+        numbers.length >= 3
+      ) {
+
+        const year =
+          Number(numbers[0]);
+
+        const month =
+          Number(numbers[1]);
+
+        const day =
+          Number(numbers[2]);
+
+
+        const date =
+          new Date(
+            year,
+            month - 1,
+            day
+          );
+
+
+        if (
+          !isNaN(
+            date.getTime()
+          )
+        ) {
+          return date;
+        }
+
+      }
+
+
+      return null;
+
+    }
+
+
+
+    function formatKoreanDate(date) {
+
+      return (
+        date.getFullYear() +
+        "년 " +
+        (date.getMonth() + 1) +
+        "월 " +
+        date.getDate() +
+        "일"
+      );
+
+    }
+
+
+
+    function getExerciseIcon(type) {
+
+      const name =
+        String(type || "");
+
+
+      if (
+        name.includes("걷")
+      ) {
+        return "🚶";
+      }
+
+
+      if (
+        name.includes("자전거")
+      ) {
+        return "🚲";
+      }
+
+
+      if (
+        name.includes("근력")
+      ) {
+        return "💪";
+      }
+
+
+      if (
+        name.includes("스트레칭") ||
+        name.includes("요가")
+      ) {
+        return "🧘";
+      }
+
+
+      if (
+        name.includes("달리기") ||
+        name.includes("러닝")
+      ) {
+        return "🏃";
+      }
+
+
+      return "⭐";
+
+    }
+
+  </script>
+
+</body>
+</html>
